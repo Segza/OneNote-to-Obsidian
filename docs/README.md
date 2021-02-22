@@ -58,7 +58,7 @@ The powershell script 'ConvertOneNote2MarkDown-v2.ps1' will utilize the OneNote 
 
   * I have only tested this on Windows...
 
-* Microsoft OneNote >= 2016
+* Microsoft OneNote >= 2016 (To be clear, this is the Desktop version NOT the Windows Store version. Can be downloaded for FREE here - https://www.onenote.com/Download)
 
 * Microsoft Word >= 2016
 
