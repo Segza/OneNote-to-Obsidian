@@ -1,3 +1,6 @@
+# fix encoding problems for languages other than English
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+
 Function Remove-InvalidFileNameChars {
     param(
         [Parameter(Mandatory = $true,
