@@ -83,7 +83,7 @@ Clone this repository to acquire the powershell script.
     ```'.\ConvertOneNote2MarkDown-v2.ps1'```
     
     * if you receive an error, try running this line to bypass security:
-     "Set-ExecutionPolicy Bypass -Scope Process"
+     ``Set-ExecutionPolicy Bypass -Scope Process``
     * if you still have trouble, try running both Onenote and Powershell as an administrator.
 
 1. It will ask you for the path to store the markdown folder structure. Please use an empty folder. If using VS Code, you might not be able to paste the filepath - right click on the blinking cursor and it will paste from clipboard.
