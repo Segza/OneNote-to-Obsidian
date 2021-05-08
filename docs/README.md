@@ -80,7 +80,7 @@ Clone this repository to acquire the powershell script.
 1. It is highly recommended that you use VS Code, and its embedded Powershell terminal, as this allows you to edit and run the script, as well as check the results of the .md output all in one window. 
 1. Whatever you choose, open a PowerShell terminal and navigate to the folder containing the script and run it. 
 
-    ```'.\ConvertOneNote2MarkDown-v2.ps1'```
+    ```.\ConvertOneNote2MarkDown-v2.ps1```
     
     * if you have trouble, try running both Onenote and Powershell as an administrator.
     * if you receive an error, try running this line to bypass security:
