@@ -25,6 +25,7 @@ The powershell script 'ConvertOneNote2MarkDown-v2.ps1' will utilize the OneNote 
 
 * Create a **folder structure** for your Notebooks and Sections
 * Process pages that are in sections at the **Notebook, Section Group and up to 5 Nested Section Group levels**
+* Allow you to choose between **converting a specific notebook or all notebooks**
 * Allow you to **choose between creating subfolders for subpages** (e.g. Page\Subpage.md) or **appending prefixes** (e.g. Page_Subpage.md)
 * Allow you you choose between putting all **Images** in a central '/media' folder for each notebook, or in a separate '/media' folder in each folder of the hierarchy
 * Fix image references in the resulting .md files, generating *relative* references to the image files within the markdown document
@@ -77,26 +78,19 @@ Clone this repository to acquire the powershell script.
 ## Usage
 
 1. Start the OneNote application. All notebooks currently loaded in OneNote will be converted
-1. It is advised that you install Onetastic and the attached macro, which will automatically expand any collapsed paragraphs in the notebook. They won't be exported otherwise.
+2. . It is advised that you install Onetastic and the attached macro, which will automatically expand any collapsed paragraphs in the notebook. They won't be exported otherwise.
     * To install the macro, click the New Macro Button within the Onetastic Toolbar and then select File -> Import and select the .xml macro included in the release.
     * Run the macro for each Notebook that is open
-1. It is highly recommended that you use VS Code, and its embedded Powershell terminal, as this allows you to edit and run the script, as well as check the results of the .md output all in one window.
-1. Whatever you choose, open a PowerShell terminal and navigate to the folder containing the script and run it.
-
-    ```.\ConvertOneNote2MarkDown-v2.ps1```
+3. It is highly recommended that you use VS Code, and its embedded Powershell terminal, as this allows you to edit and run the script, as well as check the results of the .md output all in one window.
+4. Start by editing the configuration at the top of the script to your liking
+5. Open a PowerShell terminal and navigate to the folder containing the script and run it: `.\ConvertOneNote2MarkDown-v2.ps1`
 
     * if you have trouble, try running both Onenote and Powershell as an administrator.
-    * if you receive an error, try running this line to bypass security:
-     ``Set-ExecutionPolicy Bypass -Scope Process``
+    * if you receive an error, try running this line to bypass security: `Set-ExecutionPolicy Bypass -Scope Process`
 
-
-1. It will ask you for the path to store the markdown folder structure. Please use an empty folder. If using VS Code, you might not be able to paste the filepath - right click on the blinking cursor and it will paste from clipboard.
-
-    **Attention:** use a full absolute path for the destination
-1. Read the prompts carefully to select your desired options. If you aren't actively editing your pages in Onenote, it is HIGHLY recommended that you don't delete the intermediate word docs, as they take 80+% of the time to generate. They are stored in their own folder, out of the way. You can then quickly re-run the script with different parameters until you find what you like.
-1. Sit back and wait until the process completes
-1. To stop the process at any time, press Ctrl+C.
-1. If you like, you can inspect some of the .md files prior to completion. If you're not happy with the results, stop the process, delete the .md and media folders and re-run with different parameters.
+6. Sit back and wait until the process completes
+7. To stop the process at any time, press Ctrl+C.
+8. If you like, you can inspect some of the .md files prior to completion. If you're not happy with the results, stop the process, delete the .md and media folders and re-run with different parameters.
 
 ## Results
 
@@ -104,6 +98,7 @@ The script will log any errors encountered at the end of its run, so please revi
 If you are satisfied check the results with a markdown editor like VSCode. All images should popup just right in the Preview Pane for Markdown files.
 
 ## Recommendations
+
 1. I'd like to strongly recommend the [VS Code Foam extension](https://github.com/foambubble/foam-template), which pulls together a selection of markdown-related extensions to become a comprehensive knowledge management tool.
 1. I'd also like to recommend [Obsidian.md](http://obsidian.md), which is another fantastic markdown knowledge management tool.
 1. Some other VSCode markdown extensions to check out are:
