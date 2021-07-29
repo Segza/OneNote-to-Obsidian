@@ -90,7 +90,7 @@ Function ProcessSections ($group, $FilePath) {
         "### " + $section.Name | Write-Host
         $sectionFileName = "$($section.Name)" | Remove-InvalidFileNameChars
         $item = New-Item -Path "$($FilePath)" -Name "$($sectionFileName)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-        $item | Format-Table | Out-String | Write-Host
+        "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
         [int]$previouspagelevel = 1
         [string]$previouspagenamelevel1 = ""
         [string]$previouspagenamelevel2 = ""
@@ -150,7 +150,7 @@ Function ProcessSections ($group, $FilePath) {
                 #all else/default, create subfolders and filepath if subfolders selected
                 else {
                     $item = New-Item -Path "$($fullexportdirpath)\$($pageprefix)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                    $item | Format-Table | Out-String | Write-Host | Out-Null
+                    "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host | Out-Null
                     $fullexportdirpath = "$($fullexportdirpath)\$($pageprefix)"
                     $fullfilepathwithoutextension = "$($fullexportdirpath)\$($pagename)"
                     $levelsprefix = "../" * ($levelsfromroot + $pagelevel - 1) + ".."
@@ -230,7 +230,7 @@ Function ProcessSections ($group, $FilePath) {
             $pageinsertedfiles = $pagexml.Page.Outline.OEChildren.OE | Where-Object { $_.InsertedFile }
             foreach ($pageinsertedfile in $pageinsertedfiles) {
                 $item = New-Item -Path "$($mediaPath)" -Name "media" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                $item | Format-Table | Out-String | Write-Host | Out-Null
+                "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host | Out-Null
                 $destfilename = ""
                 try {
                     $destfilename = $pageinsertedfile.InsertedFile.preferredName | Remove-InvalidFileNameCharsInsertedFiles
@@ -384,12 +384,12 @@ try {
         $notebook.Name | Write-Host
         $notebookFileName = "$($notebook.Name)" | Remove-InvalidFileNameChars
         $item = New-Item -Path "$($notesdestpath)\" -Name "$($notebookFileName)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-        $item | Format-Table | Out-String | Write-Host
+        "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
         $NotebookFilePath = "$($notesdestpath)\$($notebookFileName)"
         $levelsfromroot = 0
 
         $item = New-Item -Path "$($NotebookFilePath)" -Name "docx" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-        $item | Format-Table | Out-String | Write-Host
+        "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
 
         "==============" | Write-Host
         #process any sections that are not in a section group
@@ -402,7 +402,7 @@ try {
                 "# " + $sectiongroup1.Name | Write-Host
                 $sectiongroupFileName1 = "$($sectiongroup1.Name)" | Remove-InvalidFileNameChars
                 $item = New-Item -Path "$($notesdestpath)\$($notebookFileName)" -Name "$($sectiongroupFileName1)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                $item | Format-Table | Out-String | Write-Host | Out-Null
+                "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host | Out-Null
                 $sectiongroupFilePath1 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)"
                 ProcessSections $sectiongroup1 $sectiongroupFilePath1
 
@@ -413,7 +413,7 @@ try {
                         "## " + $sectiongroup2.Name | Write-Host
                         $sectiongroupFileName2 = "$($sectiongroup2.Name)" | Remove-InvalidFileNameChars
                         $item = New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)" -Name "$($sectiongroupFileName2)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                        $item | Format-Table | Out-String | Write-Host
+                        "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
                         $sectiongroupFilePath2 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)"
                         ProcessSections $sectiongroup2 $sectiongroupFilePath2
 
@@ -424,7 +424,7 @@ try {
                                 "### " + $sectiongroup3.Name | Write-Host
                                 $sectiongroupFileName3 = "$($sectiongroup3.Name)" | Remove-InvalidFileNameChars
                                 $item = New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)" -Name "$($sectiongroupFileName3)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                                $item | Format-Table | Out-String | Write-Host
+                                "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
                                 $sectiongroupFilePath3 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)"
                                 ProcessSections $sectiongroup3 $sectiongroupFilePath3
 
@@ -435,7 +435,7 @@ try {
                                         "#### " + $sectiongroup4.Name | Write-Host
                                         $sectiongroupFileName4 = "$($sectiongroup4.Name)" | Remove-InvalidFileNameChars
                                         $item = New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)" -Name "$($sectiongroupFileName4)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                                        $item | Format-Table | Out-String | Write-Host
+                                        "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
                                         $sectiongroupFilePath4 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)"
                                         ProcessSections $sectiongroup4 $sectiongroupFilePath4
 
@@ -446,7 +446,7 @@ try {
                                                 "#### " + $sectiongroup5.Name | Write-Host
                                                 $sectiongroupFileName5 = "$($sectiongroup5.Name)" | Remove-InvalidFileNameChars
                                                 $item = New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)" -Name "$($sectiongroupFileName5)" -ItemType "directory" -Force -ErrorAction SilentlyContinue
-                                                $item | Format-Table | Out-String | Write-Host
+                                                "Directory: $($item.FullName)" | Format-Table | Out-String | Write-Host
                                                 $sectiongroupFilePath5 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)\$($sectiongroupFileName5)"
                                                 ProcessSections $sectiongroup5 $sectiongroupFilePath5
                                             }
