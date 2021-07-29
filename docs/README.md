@@ -2,7 +2,7 @@
 title:  'Convert OneNote to MarkDown'
 author:
 - Sjoerd de Valk, SPdeValk Consultancy
-- modified by nixsee, a guy
+- modified by nixsee, a guy, @theohbrothers
 date: 2020-07-15 13:00:00
 keywords: [migration, tooling, onenote, markdown, powershell]
 abstract: |
@@ -13,6 +13,9 @@ permalink: /index.html
 Credit for this script goes to the wizard @SjoerdV who created the original script [here](https://github.com/SjoerdV/ConvertOneNote2MarkDown). I've taken it and made a variety of modifications and improvements.
 
 # Convert OneNote to MarkDown
+
+[![github-actions](https://github.com/theohbrothers/ConvertOneNote2MarkDown/workflows/ci-master-pr/badge.svg)](https://github.com/theohbrothers/ConvertOneNote2MarkDown/actions)
+[![github-release](https://img.shields.io/github/v/release/theohbrothers/ConvertOneNote2MarkDown?style=flat-square)](https://github.com/theohbrothers/ConvertOneNote2MarkDown/releases/)
 
 ## Summary
 
@@ -26,7 +29,7 @@ The powershell script 'ConvertOneNote2MarkDown-v2.ps1' will utilize the OneNote 
 * Allow you you choose between putting all **Images** in a central '/media' folder for each notebook, or in a separate '/media' folder in each folder of the hierarchy
 * Fix image references in the resulting .md files, generating *relative* references to the image files within the markdown document
 * Extract all **File Objects** to the same folder as Images and fix references in the resulting .md files. Symbols in file names removed for link compatibility.
-* Can choose between **discarding or keeping intermediate Word files**. Intermedia Word files are stored in a central notebook folder. 
+* Can choose between **discarding or keeping intermediate Word files**. Intermedia Word files are stored in a central notebook folder.
 * Allow to choose between converting from existing docx (90% faster) and creating new ones - useful if just want to test differences in the various processing options without generating new docx each time
 * Allow user can **select which markdown format will be used**, defaulting to Pandoc's standard format, which strips any HTML from tables along with other desirable (for me) formatting choices.
    * markdown (Pandoc’s Markdown)
@@ -42,7 +45,7 @@ The powershell script 'ConvertOneNote2MarkDown-v2.ps1' will utilize the OneNote 
 ## Known Issues
 
 1. If there are any collapsed paragraphs in your pages, the collapsed/hidden paragraphs will not be exported
-    * You can use the included Onetastic Macro script to automatically expand all paragraphs in each Notebook 
+    * You can use the included Onetastic Macro script to automatically expand all paragraphs in each Notebook
     * [Download Onetastic here](https://getonetastic.com/download) and, once installed, use New Macro-> File-> Import to install the attached .xml macro file within Onetastic
 1. Password protected sections should be unlocked before continuing, the Object Model does not have access to them if you don't
 1. You should start by 'flattening' all pen/hand written elements in your onennote pages. Because OneNote does not have this function you will have to take screenshots of your pages with pen/hand written notes and paste the resulting image and then remove the scriblings. If you are a heavy 'pen' user this is a very cumbersome. **If you have an automated solution for this, please let me know**
@@ -65,7 +68,7 @@ The powershell script 'ConvertOneNote2MarkDown-v2.ps1' will utilize the OneNote 
 * PanDoc >= 2.7.2
 
   * TIP: Use [Chocolatey](https://chocolatey.org/docs/installation#install-with-powershellexe) to install Pandoc on Windows, this will also set the right path (environment) statements. (https://chocolatey.org/packages/pandoc)
-    
+
 
 ## Installation
 
@@ -75,24 +78,24 @@ Clone this repository to acquire the powershell script.
 
 1. Start the OneNote application. All notebooks currently loaded in OneNote will be converted
 1. It is advised that you install Onetastic and the attached macro, which will automatically expand any collapsed paragraphs in the notebook. They won't be exported otherwise.
-    * To install the macro, click the New Macro Button within the Onetastic Toolbar and then select File -> Import and select the .xml macro included in the release. 
+    * To install the macro, click the New Macro Button within the Onetastic Toolbar and then select File -> Import and select the .xml macro included in the release.
     * Run the macro for each Notebook that is open
-1. It is highly recommended that you use VS Code, and its embedded Powershell terminal, as this allows you to edit and run the script, as well as check the results of the .md output all in one window. 
-1. Whatever you choose, open a PowerShell terminal and navigate to the folder containing the script and run it. 
+1. It is highly recommended that you use VS Code, and its embedded Powershell terminal, as this allows you to edit and run the script, as well as check the results of the .md output all in one window.
+1. Whatever you choose, open a PowerShell terminal and navigate to the folder containing the script and run it.
 
     ```.\ConvertOneNote2MarkDown-v2.ps1```
-    
+
     * if you have trouble, try running both Onenote and Powershell as an administrator.
     * if you receive an error, try running this line to bypass security:
      ``Set-ExecutionPolicy Bypass -Scope Process``
-    
+
 
 1. It will ask you for the path to store the markdown folder structure. Please use an empty folder. If using VS Code, you might not be able to paste the filepath - right click on the blinking cursor and it will paste from clipboard.
 
     **Attention:** use a full absolute path for the destination
 1. Read the prompts carefully to select your desired options. If you aren't actively editing your pages in Onenote, it is HIGHLY recommended that you don't delete the intermediate word docs, as they take 80+% of the time to generate. They are stored in their own folder, out of the way. You can then quickly re-run the script with different parameters until you find what you like.
 1. Sit back and wait until the process completes
-1. To stop the process at any time, press Ctrl+C. 
+1. To stop the process at any time, press Ctrl+C.
 1. If you like, you can inspect some of the .md files prior to completion. If you're not happy with the results, stop the process, delete the .md and media folders and re-run with different parameters.
 
 ## Results
@@ -102,7 +105,7 @@ If you are satisfied check the results with a markdown editor like VSCode. All i
 
 ## Recommendations
 1. I'd like to strongly recommend the [VS Code Foam extension](https://github.com/foambubble/foam-template), which pulls together a selection of markdown-related extensions to become a comprehensive knowledge management tool.
-1. I'd also like to recommend [Obsidian.md](http://obsidian.md), which is another fantastic markdown knowledge management tool. 
+1. I'd also like to recommend [Obsidian.md](http://obsidian.md), which is another fantastic markdown knowledge management tool.
 1. Some other VSCode markdown extensions to check out are:
 
 ```powershell
@@ -144,18 +147,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Tables use piped formatting for compatibility with Obsidian
 
 #### Changed
-* User prompt layouts 
+* User prompt layouts
 
 #### Removed
 * Nothing
- 
+
 ### [2.1] - 2020-07-15
 #### Added
 * Prompt for keep or discard .docx files
 * Prompt to have images in central folder or separate ones for each folder in hierarchy
 
 #### Changed
-* User prompt layouts 
+* User prompt layouts
 
 #### Removed
 * Nothing
@@ -177,7 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [1.1] - 2020-07-11
 #### Added
  * two new scripts to allow for Section Groups, as well as Section Groups + Subfolders for Subpages
- 
+
 #### Changed
 * Pandoc instead of gfm set as default format
 
@@ -199,6 +202,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Nothing
 
 
-## Credits 
+## Credits
 * Avi Aryan for the awesome [VSCodeNotebook](https://github.com/aviaryan/VSCodeNotebook) port
 * @SjoerdV for the original script
