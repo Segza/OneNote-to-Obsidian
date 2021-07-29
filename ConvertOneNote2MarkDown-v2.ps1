@@ -2,7 +2,7 @@
 # # # # #                   CONFIGURE SCRIPT SETTINGS                   # # # # #
 # # # # #                                                               # # # # #
 
-# Folder to store the converted markdown files (without trailing backslash!)
+# Folder to store the converted markdown files
 $notesdestpath = 'c:\temp\notes'
 
 # Whether to use existing word docs (90% faster)
@@ -331,6 +331,8 @@ Function ProcessSections ($group, $FilePath) {
 $PSDefaultParameterValues['*:Encoding'] = 'utf8'
 
 # Compile configuration
+$notesdestpath = $notesdestpath.Trim('\')
+
 if ($prefixFolders -eq 2) {
     $prefixFolders = 2
     $prefixjoiner = "_"
