@@ -1,5 +1,52 @@
-# fix encoding problems for languages other than English
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
+# # # # #                                                               # # # # #
+# # # # #                   CONFIGURE SCRIPT SETTINGS                   # # # # #
+# # # # #                                                               # # # # #
+
+# Folder to store the converted markdown files (without trailing backslash!)
+$notesdestpath = 'c:\temp\notes'
+
+# Whether to use existing word docs (90% faster)
+# 1: Create new .docx files - Default
+# 2: Use existing .docx files (90% faster)
+$usedocx = 1
+
+# Whether to discard intermediate word docs
+# 1: Discard intermediate .docx files - Default
+# 2: Keep .docx files
+$keepdocx = 1
+
+# Whether to use prefix vs subfolders
+# 1: Create folders for subpages (e.g. Page\Subpage.md)- Default
+# 2: Add prefixes for subpages (e.g. Page_Subpage.md)
+$prefixFolders = 1
+
+# Whether to store media in single or multiple folders
+# 1: Images stored in single 'media' folder at Notebook-level (Default)
+# 2: Separate 'media' folder for each folder in the hierarchy
+$medialocation = 1
+
+# Specify the conversion type
+# 1: markdown (Pandoc) - Default
+# 2: commonmark (CommonMark Markdown)
+# 3: gfm (GitHub-Flavored Markdown)
+# 4: markdown_mmd (MultiMarkdown)
+# 5: markdown_phpextra (PHP Markdown Extra)
+# 6: markdown_strict (original unextended Markdown)
+$conversion = 1
+
+# Whether to clear double spaces between bullets
+# 1: Clear double spaces in bullets - Default
+# 2: Keep double spaces
+$keepspaces = 1
+
+# Whether to clear escape symbols from md files
+# 1: Clear '\' symbol escape character from files - Default
+# 2: Keep '\' symbol escape
+$keepescape = 1
+
+# # # # #                                                                # # # # #
+# # # # # DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING # # # # #
+# # # # #                                                                # # # # #
 
 Function Remove-InvalidFileNameChars {
     param(
@@ -280,79 +327,24 @@ Function ProcessSections ($group, $FilePath) {
     }
 }
 
-""
-"-----------------------------------------------"
-# ask for the Notes root path
-"Enter the (preferably empty!) folder path (without trailing backslash!) that will contain your resulting Notes structure. ex. 'c:\temp\notes'"
-$notesdestpath = Read-Host -Prompt "Entry"
-""
-"-----------------------------------------------"
+# Fix encoding problems for languages other than English
+$PSDefaultParameterValues['*:Encoding'] = 'utf8'
 
-#prompt to use existing word docs (90% faster)
-""
-"-----------------------------------------------"
-"1: Create new .docx files - Default"
-"2: Use existing .docx files (90% faster)"
-[int] $usedocx = Read-Host -Prompt "Entry"
-
-#prompt to discard intermediate word docs
-""
-"-----------------------------------------------"
-"1: Discard intermediate .docx files - Default"
-"2: Keep .docx files"
-[int] $keepdocx = Read-Host -Prompt "Entry"
-""
-"-----------------------------------------------"
-# prompt for prefix vs subfolders
-"1: Create folders for subpages (e.g. Page\Subpage.md)- Default"
-"2: Add prefixes for subpages (e.g. Page_Subpage.md)"
-[Int]$prefixFolders = Read-Host -Prompt "Entry"
+# Compile configuration
 if ($prefixFolders -eq 2) {
     $prefixFolders = 2
     $prefixjoiner = "_"
-}
-else {
+}else {
     $prefixFolders = 1
     $prefixjoiner = "\"
 }
 
-#prompt for media in single or multiple folders
-""
-"-----------------------------------------------"
-"1: Images stored in single 'media' folder at Notebook-level (Default)"
-"2: Separate 'media' folder for each folder in the hierarchy"
-[int] $medialocation = Read-Host -Prompt "Entry"
-
-#prompt for conversion type
-""
-"Select conversion type"
-"-----------------------------------------------"
-"1: markdown (Pandoc) - Default"
-"2: commonmark (CommonMark Markdown)"
-"3: gfm (GitHub-Flavored Markdown)"
-"4: markdown_mmd (MultiMarkdown)"
-"5: markdown_phpextra (PHP Markdown Extra)"
-"6: markdown_strict (original unextended Markdown)"
-[int]$conversion = Read-Host -Prompt "Entry: "
 if ($conversion -eq 2) { $converter = "commonmark" }
 elseif ($conversion -eq 3) { $converter = "gfm" }
 elseif ($conversion -eq 4) { $converter = "markdown_mmd" }
 elseif ($conversion -eq 5) { $converter = "markdown_phpextra" }
 elseif ($conversion -eq 6) { $converter = "markdown_strict" }
 else { $converter = "markdown" }
-
-#prompt to clear double spaces between bullets
-"-----------------------------------------------"
-"1: Clear double spaces in bullets - Default"
-"2: Keep double spaces"
-[int] $keepspaces = Read-Host -Prompt "Entry"
-
-# prompt to clear escape symbols from md files
-"-----------------------------------------------"
-"1: Clear '\' symbol escape character from files"
-"2: Keep '\' symbol escape"
-[int] $keepescape = Read-Host -Prompt "Entry"
-
 
 if (Test-Path -Path $notesdestpath) {
     # open OneNote hierarchy
