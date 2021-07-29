@@ -335,31 +335,36 @@ Function ProcessSections ($group, $FilePath) {
 # Fix encoding problems for languages other than English
 $PSDefaultParameterValues['*:Encoding'] = 'utf8'
 
-# Compile configuration
-$notesdestpath = $notesdestpath.Trim('\')
 
-if ($prefixFolders -eq 2) {
-    $prefixFolders = 2
-    $prefixjoiner = "_"
-}else {
-    $prefixFolders = 1
-    $prefixjoiner = "\"
-}
+try {
+    # Validate and compile configuration
+    $notesdestpath = $notesdestpath.Trim('\')
+    if (! (Test-Path -Path $notesdestpath -PathType Container) ) {
+        throw "No such folder: $notesdestpath"
+    }
 
-if ($conversion -eq 2) { $converter = "commonmark" }
-elseif ($conversion -eq 3) { $converter = "gfm" }
-elseif ($conversion -eq 4) { $converter = "markdown_mmd" }
-elseif ($conversion -eq 5) { $converter = "markdown_phpextra" }
-elseif ($conversion -eq 6) { $converter = "markdown_strict" }
-else { $converter = "markdown" }
+    if ($prefixFolders -eq 2) {
+        $prefixFolders = 2
+        $prefixjoiner = "_"
+    }else {
+        $prefixFolders = 1
+        $prefixjoiner = "\"
+    }
 
-if (Test-Path -Path $notesdestpath) {
-    # open OneNote hierarchy
+    if ($conversion -eq 2) { $converter = "commonmark" }
+    elseif ($conversion -eq 3) { $converter = "gfm" }
+    elseif ($conversion -eq 4) { $converter = "markdown_mmd" }
+    elseif ($conversion -eq 5) { $converter = "markdown_phpextra" }
+    elseif ($conversion -eq 6) { $converter = "markdown_strict" }
+    else { $converter = "markdown" }
+
+    # Open OneNote hierarchy
     $OneNote = New-Object -ComObject OneNote.Application
     [xml]$Hierarchy = ""
     $totalerr = ""
     $OneNote.GetHierarchy("", [Microsoft.Office.InterOp.OneNote.HierarchyScope]::hsPages, [ref]$Hierarchy)
 
+    # Validate the notebooks to convert
     $notebooks = @(
         if ($targetNotebook) {
             $Hierarchy.Notebooks.Notebook | ? { $_.Name -eq $targetNotebook }
@@ -368,72 +373,72 @@ if (Test-Path -Path $notesdestpath) {
         }
     )
     if ($notebooks.Count -eq 0) {
-        "Could not find notebook of name '$targetNotebook'" | Write-Host
-    }else {
-        foreach ($notebook in $notebooks) {
-            " "
-            $notebook.Name
-            $notebookFileName = "$($notebook.Name)" | Remove-InvalidFileNameChars
-            New-Item -Path "$($notesdestpath)\" -Name "$($notebookFileName)" -ItemType "directory" -ErrorAction SilentlyContinue
-            $NotebookFilePath = "$($notesdestpath)\$($notebookFileName)"
-            $levelsfromroot = 0
+        throw "Could not find notebook of name '$targetNotebook'"
+    }
 
-            New-Item -Path "$($NotebookFilePath)" -Name "docx" -ItemType "directory" -ErrorAction SilentlyContinue
+    foreach ($notebook in $notebooks) {
+        " "
+        $notebook.Name
+        $notebookFileName = "$($notebook.Name)" | Remove-InvalidFileNameChars
+        New-Item -Path "$($notesdestpath)\" -Name "$($notebookFileName)" -ItemType "directory" -ErrorAction SilentlyContinue
+        $NotebookFilePath = "$($notesdestpath)\$($notebookFileName)"
+        $levelsfromroot = 0
 
-            "=============="
-            #process any sections that are not in a section group
-            ProcessSections $notebook $NotebookFilePath
+        New-Item -Path "$($NotebookFilePath)" -Name "docx" -ItemType "directory" -ErrorAction SilentlyContinue
 
-            #start looping through any top-level section groups in the notebook
-            foreach ($sectiongroup1 in $notebook.SectionGroup) {
-                $levelsfromroot = 1
-                if ($sectiongroup1.isRecycleBin -ne 'true') {
-                    "# " + $sectiongroup1.Name
-                    $sectiongroupFileName1 = "$($sectiongroup1.Name)" | Remove-InvalidFileNameChars
-                    New-Item -Path "$($notesdestpath)\$($notebookFileName)" -Name "$($sectiongroupFileName1)" -ItemType "directory" -ErrorAction SilentlyContinue
-                    $sectiongroupFilePath1 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)"
-                    ProcessSections $sectiongroup1 $sectiongroupFilePath1
+        "=============="
+        #process any sections that are not in a section group
+        ProcessSections $notebook $NotebookFilePath
 
-                    #start looping through any 2nd level section groups within the 1st level section group
-                    foreach ($sectiongroup2 in $sectiongroup1.SectionGroup) {
-                        $levelsfromroot = 2
-                        if ($sectiongroup2.isRecycleBin -ne 'true') {
-                            "## " + $sectiongroup2.Name
-                            $sectiongroupFileName2 = "$($sectiongroup2.Name)" | Remove-InvalidFileNameChars
-                            New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)" -Name "$($sectiongroupFileName2)" -ItemType "directory" -ErrorAction SilentlyContinue
-                            $sectiongroupFilePath2 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)"
-                            ProcessSections $sectiongroup2 $sectiongroupFilePath2
+        #start looping through any top-level section groups in the notebook
+        foreach ($sectiongroup1 in $notebook.SectionGroup) {
+            $levelsfromroot = 1
+            if ($sectiongroup1.isRecycleBin -ne 'true') {
+                "# " + $sectiongroup1.Name
+                $sectiongroupFileName1 = "$($sectiongroup1.Name)" | Remove-InvalidFileNameChars
+                New-Item -Path "$($notesdestpath)\$($notebookFileName)" -Name "$($sectiongroupFileName1)" -ItemType "directory" -ErrorAction SilentlyContinue
+                $sectiongroupFilePath1 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)"
+                ProcessSections $sectiongroup1 $sectiongroupFilePath1
 
-                            #start looping through any 2nd level section groups within the 1st level section group
-                            foreach ($sectiongroup3 in $sectiongroup2.SectionGroup) {
-                                $levelsfromroot = 3
-                                if ($sectiongroup3.isRecycleBin -ne 'true') {
-                                    "### " + $sectiongroup3.Name
-                                    $sectiongroupFileName3 = "$($sectiongroup3.Name)" | Remove-InvalidFileNameChars
-                                    New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)" -Name "$($sectiongroupFileName3)" -ItemType "directory" -ErrorAction SilentlyContinue
-                                    $sectiongroupFilePath3 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)"
-                                    ProcessSections $sectiongroup3 $sectiongroupFilePath3
+                #start looping through any 2nd level section groups within the 1st level section group
+                foreach ($sectiongroup2 in $sectiongroup1.SectionGroup) {
+                    $levelsfromroot = 2
+                    if ($sectiongroup2.isRecycleBin -ne 'true') {
+                        "## " + $sectiongroup2.Name
+                        $sectiongroupFileName2 = "$($sectiongroup2.Name)" | Remove-InvalidFileNameChars
+                        New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)" -Name "$($sectiongroupFileName2)" -ItemType "directory" -ErrorAction SilentlyContinue
+                        $sectiongroupFilePath2 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)"
+                        ProcessSections $sectiongroup2 $sectiongroupFilePath2
 
-                                    #start looping through any 2nd level section groups within the 1st level section group
-                                    foreach ($sectiongroup4 in $sectiongroup3.SectionGroup) {
-                                        $levelsfromroot = 4
-                                        if ($sectiongroup4.isRecycleBin -ne 'true') {
-                                            "#### " + $sectiongroup4.Name
-                                            $sectiongroupFileName4 = "$($sectiongroup4.Name)" | Remove-InvalidFileNameChars
-                                            New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)" -Name "$($sectiongroupFileName4)" -ItemType "directory" -ErrorAction SilentlyContinue
-                                            $sectiongroupFilePath4 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)"
-                                            ProcessSections $sectiongroup4 $sectiongroupFilePath4
+                        #start looping through any 2nd level section groups within the 1st level section group
+                        foreach ($sectiongroup3 in $sectiongroup2.SectionGroup) {
+                            $levelsfromroot = 3
+                            if ($sectiongroup3.isRecycleBin -ne 'true') {
+                                "### " + $sectiongroup3.Name
+                                $sectiongroupFileName3 = "$($sectiongroup3.Name)" | Remove-InvalidFileNameChars
+                                New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)" -Name "$($sectiongroupFileName3)" -ItemType "directory" -ErrorAction SilentlyContinue
+                                $sectiongroupFilePath3 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)"
+                                ProcessSections $sectiongroup3 $sectiongroupFilePath3
 
-                                            #start looping through any 2nd level section groups within the 1st level section group
-                                            foreach ($sectiongroup5 in $sectiongroup4.SectionGroup) {
-                                                $levelsfromroot = 5
-                                                if ($sectiongroup5.isRecycleBin -ne 'true') {
-                                                    "#### " + $sectiongroup5.Name
-                                                    $sectiongroupFileName5 = "$($sectiongroup5.Name)" | Remove-InvalidFileNameChars
-                                                    New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)" -Name "$($sectiongroupFileName5)" -ItemType "directory" -ErrorAction SilentlyContinue
-                                                    $sectiongroupFilePath5 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)\$($sectiongroupFileName5)"
-                                                    ProcessSections $sectiongroup5 $sectiongroupFilePath5
-                                                }
+                                #start looping through any 2nd level section groups within the 1st level section group
+                                foreach ($sectiongroup4 in $sectiongroup3.SectionGroup) {
+                                    $levelsfromroot = 4
+                                    if ($sectiongroup4.isRecycleBin -ne 'true') {
+                                        "#### " + $sectiongroup4.Name
+                                        $sectiongroupFileName4 = "$($sectiongroup4.Name)" | Remove-InvalidFileNameChars
+                                        New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)" -Name "$($sectiongroupFileName4)" -ItemType "directory" -ErrorAction SilentlyContinue
+                                        $sectiongroupFilePath4 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)"
+                                        ProcessSections $sectiongroup4 $sectiongroupFilePath4
+
+                                        #start looping through any 2nd level section groups within the 1st level section group
+                                        foreach ($sectiongroup5 in $sectiongroup4.SectionGroup) {
+                                            $levelsfromroot = 5
+                                            if ($sectiongroup5.isRecycleBin -ne 'true') {
+                                                "#### " + $sectiongroup5.Name
+                                                $sectiongroupFileName5 = "$($sectiongroup5.Name)" | Remove-InvalidFileNameChars
+                                                New-Item -Path "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)" -Name "$($sectiongroupFileName5)" -ItemType "directory" -ErrorAction SilentlyContinue
+                                                $sectiongroupFilePath5 = "$($notesdestpath)\$($notebookFileName)\$($sectiongroupFileName1)\$($sectiongroupFileName2)\$($sectiongroupFileName3)\$($sectiongroupFileName4)\$($sectiongroupFileName5)"
+                                                ProcessSections $sectiongroup5 $sectiongroupFilePath5
                                             }
                                         }
                                     }
@@ -445,12 +450,14 @@ if (Test-Path -Path $notesdestpath) {
             }
         }
     }
+}catch {
+    $_ | Write-Host
+    throw
+}finally {
+    'Cleaning up' | Write-Host
 
-    # release OneNote hierarchy
+    # Release OneNote hierarchy
     [System.Runtime.Interopservices.Marshal]::ReleaseComObject($OneNote)
     Remove-Variable OneNote
     $totalerr
-}
-else {
-    Write-Host "This path is NOT valid"
 }
